@@ -169,13 +169,13 @@ public class Functions {
 				if(element.containsKey("italic") && Static.getBoolean(element.get("italic", t)))
 					builder.italic();
 				
-				if(element.containsKey("underline") && Static.getBoolean(element.get("underline", t)))
+				if(element.containsKey("underlined") && Static.getBoolean(element.get("underlined", t)))
 					builder.underline();
 				
 				if(element.containsKey("strikethrough") && Static.getBoolean(element.get("strikethrough", t)))
 					builder.strikethrough();
 				
-				if(element.containsKey("obfuscate") && Static.getBoolean(element.get("obfuscate", t)))
+				if(element.containsKey("obfuscated") && Static.getBoolean(element.get("obfuscated", t)))
 					builder.obfuscate();
 				
 				//Click Event Checks

@@ -139,7 +139,7 @@ public class ChatBuilder {
 
 	public static ChatColor stringToChatColor(String color) throws IllegalArgumentException {
 		switch(color.toUpperCase()) {
-			case "obfuscate":
+			case "obfuscated":
 				return ChatColor.MAGIC;
 			case "underlined":
 				return ChatColor.UNDERLINE;
@@ -151,7 +151,7 @@ public class ChatBuilder {
 	public static String stringFromChatColor(ChatColor color) {
 		switch(color) {
 			case MAGIC:
-				return "obfuscate";
+				return "obfuscated";
 			case UNDERLINE:
 				return "underlined";
 			default:
