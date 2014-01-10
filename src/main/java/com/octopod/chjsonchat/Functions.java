@@ -27,7 +27,6 @@ import com.octopod.utils.bukkit.ChatElement.ChatHoverEvent;
 
 public class Functions {
 
-	@api
 	public static abstract class func extends AbstractFunction {
 
 		public boolean isRestricted() {
