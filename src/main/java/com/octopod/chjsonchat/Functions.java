@@ -70,7 +70,7 @@ public class Functions {
 			ChatBuilder cb = fromArray(format, t);
 			Static.getServer().getConsole().sendMessage(cb.toLegacy());
 			cb.send((Player)target.getHandle());
-			
+
 			return new CVoid(t);
 
 		}

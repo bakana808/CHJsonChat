@@ -21,10 +21,10 @@ import com.octopod.utils.bukkit.ChatElement.ChatHoverEvent;
  * @author Octopod
  */
 public class ChatBuilder {
-	
+
 	List<ChatElement> elements = new ArrayList<ChatElement>();
 	ChatElement subject = null;
-	
+
 	public static ChatBuilder fromLegacy(String message) {
 		ChatBuilder builder = new ChatBuilder();
 		return builder;
@@ -121,7 +121,8 @@ public class ChatBuilder {
 	}
 	
 	public void send(Player player) {
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(this.toString())));		
+		PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a(this.toString()));
+		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);		
 	}
 	
 	public String toLegacy() {
