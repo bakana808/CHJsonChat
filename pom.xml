@@ -21,7 +21,42 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-            
+			<!--
+			<plugin>
+				<groupId>com.github.wvengen</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals><goal>proguard</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<proguardVersion>4.11</proguardVersion>
+					<maxMemory>256m</maxMemory>
+					<injar>${project.build.finalName}.jar</injar>
+					<outjar>${project.name}-${project.version}.jar</outjar>
+					<obfuscate>true</obfuscate>
+					<options>
+						<option>-keep class *</option>
+                        <option>-dontskipnonpubliclibraryclasses</option>
+                        <option>-dontskipnonpubliclibraryclassmembers</option>
+					</options>
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+						<lib>${java.home}/lib/jsse.jar</lib>
+						<lib>${java.home}/lib/jce.jar</lib>
+					</libs>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.proguard</groupId>
+						<artifactId>proguard-base</artifactId>
+						<version>4.11</version>
+					</dependency>
+				</dependencies>
+			</plugin>  
+            -->
             <!-- Leave this alone! Verifies some things so that your extension works. -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>

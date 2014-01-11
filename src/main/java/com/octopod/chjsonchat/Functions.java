@@ -8,7 +8,6 @@ import com.laytonsmith.abstraction.MCCommandSender;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.annotations.api;
 import com.laytonsmith.core.CHVersion;
-import com.laytonsmith.core.PermissionsResolver;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
@@ -18,7 +17,6 @@ import com.laytonsmith.core.constructs.Construct;
 import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
-import com.laytonsmith.core.environments.GlobalEnv;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.AbstractFunction;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
@@ -27,7 +25,7 @@ import com.octopod.utils.bukkit.ChatElement;
 import com.octopod.utils.bukkit.ChatElement.ChatClickEvent;
 import com.octopod.utils.bukkit.ChatElement.ChatHoverEvent;
 
-public class Functions {
+public class Functions extends CHJsonChat{
 
 	public static abstract class func extends AbstractFunction {
 
@@ -54,14 +52,26 @@ public class Functions {
 
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			
+			char colorSymbol = '&';
+			
+			if(args.length == 2) {
+				if(!(args[1] instanceof CString))
+					throw new ConfigRuntimeException("If color symbol is provided, must be a character.", ExceptionType.CastException, t);
+				try{
+					colorSymbol = args[1].val().charAt(0);
+				} catch (Exception e) {
+					throw new ConfigRuntimeException("If color symbol is provided, cannot be empty.", ExceptionType.CastException, t);
+				}
+			}
+			
 			if(args[0] instanceof CString) {
-				ChatBuilder cb = ChatBuilder.fromLegacy(args[0].val());
+				ChatBuilder cb = ChatBuilder.fromLegacy(args[0].val(), colorSymbol);
 				return toArray(cb, t);
 			}
 			
 			if(args[0] instanceof CArray) {
 				ChatBuilder cb = fromArray((CArray)args[0], t);
-				return new CString(ChatBuilder.toLegacy(cb), t);
+				return new CString(ChatBuilder.toLegacy(cb, colorSymbol), t);
 			}
 
 			throw new ConfigRuntimeException("Only strings and formatArrays are allowed.", ExceptionType.CastException, t);
@@ -73,7 +83,7 @@ public class Functions {
 		}
 
 		public Integer[] numArgs() {
-			return new Integer[]{1};
+			return new Integer[]{1, 2};
 		}
 
 		public String docs() {

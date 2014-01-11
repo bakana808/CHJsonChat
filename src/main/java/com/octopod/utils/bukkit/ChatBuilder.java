@@ -259,8 +259,7 @@ public class ChatBuilder {
 	
 	public static ChatBuilder fromLegacy(String message, char colorSymbol) {
 		ChatBuilder builder = new ChatBuilder();
-		
-		boolean skip = true;
+
 		StringBuilder text = new StringBuilder();
 		boolean nextIsColorCode = false;
 		ChatColor lastColor = ChatColor.WHITE;
@@ -279,12 +278,11 @@ public class ChatBuilder {
 				if(color != null) {
 					if(color.isColor()) {
 						//Push new element
-						if(!skip) builder.push(text.toString()).color(lastColor).format(styles.toArray(new ChatColor[styles.size()]));
+						if(!text.toString().equals("")) builder.push(text.toString()).color(lastColor).format(styles.toArray(new ChatColor[styles.size()]));
 						//Reset variables
 						text = new StringBuilder();
 						lastColor = color;
 						styles = new ArrayList<ChatColor>();
-						skip = false;
 					}
 					if(color.isFormat())
 						styles.add(color);
