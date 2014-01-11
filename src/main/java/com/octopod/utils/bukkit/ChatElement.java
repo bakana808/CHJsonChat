@@ -14,6 +14,7 @@ import org.json.simple.JSONValue;
  */
 public class ChatElement {
 	
+	public ChatElement() {this("");}
 	public ChatElement(String text) {this.text = text;}
 
 	public static enum ChatClickEvent {OPEN_URL, OPEN_FILE, RUN_COMMAND, SUGGEST_COMMAND}
@@ -23,41 +24,47 @@ public class ChatElement {
 	private boolean translate = false;
 	private List<String> with = new ArrayList<String>();
 	
-	private List<ChatColor> styles = new ArrayList<ChatColor>();
-
-	private ChatColor color = ChatColor.WHITE;
+	private ChatColor color = ChatColor.WHITE;	
+	private List<ChatColor> formats = new ArrayList<ChatColor>();
 	
 	private ChatClickEvent clickEvent = null;
-	private Object clickEvent_value = "";
+	private String clickEvent_value = "";
 	
 	private ChatHoverEvent hoverEvent = null;
-	private Object hoverEvent_value = "";
+	private String hoverEvent_value = "";
+	
+	public ChatClickEvent getClick() {return clickEvent;}
+	public ChatHoverEvent getHover() {return hoverEvent;}
+	public String getClickValue() {return clickEvent_value;}
+	public String getHoverValue() {return hoverEvent_value;}
 	
 	public String getText() {return text;}
 	public ChatColor getColor() {return color;}
-	public List<ChatColor> getStyles() {return styles;}
+	public List<ChatColor> getFormats() {return formats;}
+	
+	public void translate(boolean t) {translate = t;}
 	
 	public void color(ChatColor color) {
 		if(color.isColor())
 			this.color = color;
 	}
 	
-	public void style(ChatColor style) {
-		if(style.isFormat() && !styles.contains(style))
-			styles.add(style);
+	public void format(ChatColor format) {
+		if(format.isFormat() && !formats.contains(format))
+			formats.add(format);
 	}
 	
-	public void style_remove(ChatColor style) {
-		if(style.isFormat() && styles.contains(style))
-			styles.remove(style);
+	public void format_remove(ChatColor format) {
+		if(format.isFormat() && formats.contains(format))
+			formats.remove(format);
 	}
 	
-	public void setOnClick(ChatClickEvent event, String value) {
+	public void click(ChatClickEvent event, String value) {
 		clickEvent = event;
 		clickEvent_value = value;
 	}
 	
-	public void setOnHover(ChatHoverEvent event, String value) {
+	public void hover(ChatHoverEvent event, String value) {
 		hoverEvent = event;
 		hoverEvent_value = value;
 	}
@@ -68,13 +75,12 @@ public class ChatElement {
 		Map<String, Object> json = new HashMap();
 		
 		if(translate) {
-			json.put("translate", text);
+			json.put("translate", text);			
+			if(with.size() > 0)
+				json.put("with", with);
 		} else {
 			json.put("text", text);
 		}
-		
-		if(with.size() > 0)
-			json.put("with", with);
 
 		if(clickEvent != null) {
 			Map click = new HashMap();
@@ -90,7 +96,7 @@ public class ChatElement {
 			json.put("hoverEvent", hover);
 		}
 
-		for(ChatColor style: styles)
+		for(ChatColor style: formats)
 			json.put(ChatBuilder.stringFromChatColor(style), true);
 		
 		json.put("color", color.name().toLowerCase());
