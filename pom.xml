@@ -10,7 +10,7 @@
 	<properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>
 
 	<build>
-		<finalName>${project.name}-${project.version}</finalName>
+		<finalName>original</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -21,7 +21,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
@@ -38,11 +38,11 @@
 					<outjar>${project.name}-${project.version}.jar</outjar>
 					<obfuscate>true</obfuscate>
 					<options>
-						<option>-keep class com.octopod.chjsonchat.Functions*</option>
-						<option>-keepattributes *Annotation*</option>
-						<option>-keepclassmembers class com.octopod.chjsonchat.**</option>
-                        <option>-dontskipnonpubliclibraryclasses</option>
-                        <option>-dontskipnonpubliclibraryclassmembers</option>
+						<option>-keep,allowobfuscation class **</option>
+						<option>-keep class com.octopod.chjsonchat.CHJsonChat</option>
+						<option>-keep class com.octopod.chjsonchat.Functions**</option>
+						<option>-keepattributes *</option>
+						<option>-repackageclasses 'a'</option>
 					</options>
 					<libs>
 						<lib>${java.home}/lib/rt.jar</lib>
@@ -58,7 +58,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>  
-
+            
             <!-- Leave this alone! Verifies some things so that your extension works. -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>

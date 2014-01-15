@@ -3,11 +3,9 @@ package com.octopod.chjsonchat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.laytonsmith.PureUtilities.Version;
 import com.laytonsmith.abstraction.MCCommandSender;
 import com.laytonsmith.abstraction.MCPlayer;
 import com.laytonsmith.annotations.api;
-import com.laytonsmith.core.CHVersion;
 import com.laytonsmith.core.Static;
 import com.laytonsmith.core.constructs.CArray;
 import com.laytonsmith.core.constructs.CBoolean;
@@ -18,7 +16,6 @@ import com.laytonsmith.core.constructs.Target;
 import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
-import com.laytonsmith.core.functions.AbstractFunction;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
 import com.octopod.utils.bukkit.ChatBuilder;
 import com.octopod.utils.bukkit.ChatElement;
@@ -26,25 +23,9 @@ import com.octopod.utils.bukkit.ChatElement.ChatClickEvent;
 import com.octopod.utils.bukkit.ChatElement.ChatHoverEvent;
 
 public class Functions extends CHJsonChat{
-
-	public static abstract class func extends AbstractFunction {
-
-		public boolean isRestricted() {
-			return true;
-		}
-
-		public Boolean runAsync() {
-			return false;
-		}
-
-		public Version since() {
-			return CHVersion.V3_3_1;
-		}
-		
-	}
 	
 	@api
-	public static class chjc_convert extends func {
+	public static class chjc_convert extends Function {
 
 		public ExceptionType[] thrown() {
 			return new ExceptionType[]{};
@@ -93,7 +74,7 @@ public class Functions extends CHJsonChat{
 	}	
 	
 	@api
-	public static class chjc_msg extends func {
+	public static class chjc_msg extends Function {
 
 		public ExceptionType[] thrown() {
 			return new ExceptionType[]{};
@@ -138,7 +119,7 @@ public class Functions extends CHJsonChat{
 	}
 	
 	@api
-	public static class chjc_broadcast extends func {
+	public static class chjc_broadcast extends Function {
 
 		public ExceptionType[] thrown() {
 			return new ExceptionType[]{};
