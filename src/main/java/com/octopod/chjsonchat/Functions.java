@@ -16,13 +16,13 @@ import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
-import com.octopod.utils.bukkit.ChatBuilder;
-import com.octopod.utils.bukkit.ChatElement;
-import com.octopod.utils.bukkit.ChatUtils;
-import com.octopod.utils.bukkit.ChatUtils.ClickEvent;
-import com.octopod.utils.bukkit.ChatUtils.Color;
-import com.octopod.utils.bukkit.ChatUtils.Format;
-import com.octopod.utils.bukkit.ChatUtils.HoverEvent;
+import com.octopod.utils.minecraft.ChatBuilder;
+import com.octopod.utils.minecraft.ChatElement;
+import com.octopod.utils.minecraft.ChatUtils;
+import com.octopod.utils.minecraft.ChatUtils.ClickEvent;
+import com.octopod.utils.minecraft.ChatUtils.Color;
+import com.octopod.utils.minecraft.ChatUtils.Format;
+import com.octopod.utils.minecraft.ChatUtils.HoverEvent;
 
 public class Functions extends CHJsonChat{
 	
@@ -42,7 +42,7 @@ public class Functions extends CHJsonChat{
 				target = (MCPlayer)sender;
 			}
 			
-			ChatUtils.send((Player)target.getHandle(), args[0].val());
+			ChatUtils.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target), args[0].val());
 			
 			return new CVoid(t);
 
@@ -130,7 +130,7 @@ public class Functions extends CHJsonChat{
 
 			ChatBuilder cb = fromArray(format, t);
 			Static.getServer().getConsole().sendMessage(cb.toLegacy());
-			cb.send((Player)target.getHandle());
+			cb.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target));
 
 			return new CVoid(t);
 
@@ -167,7 +167,7 @@ public class Functions extends CHJsonChat{
 			
 			for(MCPlayer target: Static.getServer().getOnlinePlayers())
 				if(permission == null || ((Player)target.getHandle()).hasPermission(permission))
-					cb.send((Player)target.getHandle());
+					cb.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target));
 			
 			return new CVoid(t);
 
