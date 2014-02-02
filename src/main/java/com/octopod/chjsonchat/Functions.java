@@ -1,6 +1,5 @@
 package com.octopod.chjsonchat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.laytonsmith.abstraction.MCCommandSender;
@@ -19,17 +18,54 @@ import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
 import com.octopod.utils.bukkit.ChatBuilder;
 import com.octopod.utils.bukkit.ChatElement;
-import com.octopod.utils.bukkit.ChatElement.ChatClickEvent;
-import com.octopod.utils.bukkit.ChatElement.ChatHoverEvent;
+import com.octopod.utils.bukkit.ChatUtils;
+import com.octopod.utils.bukkit.ChatUtils.ClickEvent;
+import com.octopod.utils.bukkit.ChatUtils.Color;
+import com.octopod.utils.bukkit.ChatUtils.Format;
+import com.octopod.utils.bukkit.ChatUtils.HoverEvent;
 
 public class Functions extends CHJsonChat{
 	
 	@api
-	public static class chjc_convert extends Function {
+	public static class chjc_raw_msg extends Function {
+		
+		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+			
+			MCCommandSender sender = environment.getEnv(CommandHelperEnvironment.class).GetCommandSender();
+			MCPlayer target;
+			if(args.length == 2) {
+				target = Static.GetPlayer(args[1], t);
+			} else {
+				if(!(sender instanceof MCPlayer)) {
+					throw new ConfigRuntimeException("You cannot send JSON chat messages to the console!", ExceptionType.FormatException, t);
+				}
+				target = (MCPlayer)sender;
+			}
+			
+			ChatUtils.send((Player)target.getHandle(), args[0].val());
+			
+			return new CVoid(t);
 
-		public ExceptionType[] thrown() {
-			return new ExceptionType[]{};
 		}
+
+		public String getName() {
+			return "chjc_raw_msg";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{1, 2};
+		}
+
+		public String docs() {
+			return "void {json, [player]} Attempts to send a raw JSON to a player." +
+					"Minecraft will not attempt to check if the JSON is valid before sending it, " +
+					"and will simply kick the player out of the server if it isn't.";
+		}
+		
+	}
+	
+	@api
+	public static class chjc_convert extends Function {
 
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			
@@ -46,13 +82,13 @@ public class Functions extends CHJsonChat{
 			}
 			
 			if(args[0] instanceof CString) {
-				ChatBuilder cb = ChatBuilder.fromLegacy(args[0].val(), colorSymbol);
+				ChatBuilder cb = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
 				return toArray(cb, t);
 			}
 			
 			if(args[0] instanceof CArray) {
 				ChatBuilder cb = fromArray((CArray)args[0], t);
-				return new CString(ChatBuilder.toLegacy(cb, colorSymbol), t);
+				return new CString(ChatUtils.toLegacy(cb, colorSymbol), t);
 			}
 
 			throw new ConfigRuntimeException("Only strings and formatArrays are allowed.", ExceptionType.CastException, t);
@@ -75,10 +111,6 @@ public class Functions extends CHJsonChat{
 	
 	@api
 	public static class chjc_msg extends Function {
-
-		public ExceptionType[] thrown() {
-			return new ExceptionType[]{};
-		}
 
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			
@@ -121,10 +153,6 @@ public class Functions extends CHJsonChat{
 	@api
 	public static class chjc_broadcast extends Function {
 
-		public ExceptionType[] thrown() {
-			return new ExceptionType[]{};
-		}
-
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 
 			String permission = null;
@@ -166,9 +194,9 @@ public class Functions extends CHJsonChat{
 		for(ChatElement e: builder.getChatElements()) {
 			CArray formatArray = new CArray(t);
 			formatArray.set("text", e.getText());
-			formatArray.set("color", ChatBuilder.stringFromChatColor(e.getColor()).toLowerCase());
-			for(ChatColor format: e.getFormats())
-				formatArray.set(ChatBuilder.stringFromChatColor(format).toLowerCase(), new CBoolean(true, t), t);
+			formatArray.set("color", e.getColor().name().toLowerCase());
+			for(Format format: e.getFormats())
+				formatArray.set(format.name().toLowerCase(), new CBoolean(true, t), t);
 			if(e.getClick() != null) {
 				CArray clickEvent = new CArray(t);
 				clickEvent.set("event", e.getClick().name().toLowerCase());
@@ -195,24 +223,24 @@ public class Functions extends CHJsonChat{
 		for(Construct c: format.asList()) {
 			
 			if(c instanceof CString) {
-				builder.push(((CString)c).val());
+				builder.append(((CString)c).val());
 				continue;
 			} 
 			
 			if(c instanceof CArray) {
 				
 				CArray element = (CArray)c;
-				ChatColor color = ChatColor.WHITE;
-				ChatClickEvent click = null;
-				ChatHoverEvent hover = null;
+				Color color = Color.WHITE;
+				ClickEvent click = null;
+				HoverEvent hover = null;
 				String text = element.get("text", t).getValue();
 				
-				builder.push(text);
+				builder.append(text);
 				
 				//Color Checks		
 				
 				try{
-					color = ChatColor.valueOf(element.get("color").val().toUpperCase());
+					color = Color.valueOf(element.get("color").val().toUpperCase());
 				} catch (IllegalArgumentException e) {
 					throw new ConfigRuntimeException("\"" + element.get("color") + "\" is not a valid color", ExceptionType.FormatException, t);
 				} catch (ConfigRuntimeException e) {}
@@ -241,7 +269,7 @@ public class Functions extends CHJsonChat{
 				if(element.containsKey("onClick")) {
 					CArray clickArray = Static.getArray(element.get("onClick"), t);
 					try{
-						click = ChatClickEvent.valueOf(clickArray.get("event", t).val().toUpperCase());
+						click = ClickEvent.valueOf(clickArray.get("event", t).val().toUpperCase());
 					} catch (IllegalArgumentException e) {
 						throw new ConfigRuntimeException("Click event must be one of: open_url, open_file, run_command, suggest_command", ExceptionType.FormatException, t);
 					}
@@ -253,7 +281,7 @@ public class Functions extends CHJsonChat{
 				if(element.containsKey("onHover")) {
 					CArray hoverArray = Static.getArray(element.get("onHover"), t);
 					try{
-						hover = ChatHoverEvent.valueOf(hoverArray.get("event", t).val().toUpperCase());
+						hover = HoverEvent.valueOf(hoverArray.get("event", t).val().toUpperCase());
 					} catch (IllegalArgumentException e) {
 						throw new ConfigRuntimeException("Hover event must be one of: show_text, show_achievement, show_item", ExceptionType.FormatException, t);
 					}
