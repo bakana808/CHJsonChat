@@ -10,7 +10,7 @@
 	<properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>
 
 	<build>
-		<finalName>original</finalName>
+		<finalName>${project.name}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -21,7 +21,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			
+			<!--
 			<plugin>
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
@@ -59,7 +59,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>  
-            
+            -->
             <!-- Leave this alone! Verifies some things so that your extension works. -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>
