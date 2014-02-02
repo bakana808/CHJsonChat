@@ -6,7 +6,6 @@
   <name>CHJsonChat</name>
   <version>0.1</version>
   <build>
-    <finalName>${project.name}-${project.version}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
