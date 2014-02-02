@@ -5,7 +5,7 @@
 	<artifactId>chjsonchat</artifactId>
 
 	<name>CHJsonChat</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	
 	<properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>
 
@@ -20,6 +20,51 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<minimizeJar>true</minimizeJar>
+				  <!-- put your configurations here -->
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<artifactSet>
+						<includes>
+							<include>com.octopod:octolib</include>
+						</includes>
+					</artifactSet>
+					<filters>
+						<filter>
+							<artifact>com.octopod:octolib</artifact>
+							<includes>
+								<include>com/octopod/utils/bukkit/Chat**.class</include>
+							</includes>
+						</filter>
+					</filters>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<!--
 			<plugin>
@@ -167,6 +212,10 @@
 	</build>
 	
 	<repositories>
+		<repository>
+			<id>nixium-repo</id>
+			<url>http://repo.nixium.com/</url>
+		</repository>
         <repository>
             <id>sk89q-mvn2</id>
             <url>http://mvn2.sk89q.com/repo</url>
@@ -178,6 +227,12 @@
 	</repositories>	
 	
 	<dependencies>
+		<dependency>
+			<groupId>com.octopod</groupId>
+			<artifactId>octolib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
