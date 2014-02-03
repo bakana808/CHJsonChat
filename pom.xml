@@ -52,7 +52,9 @@
 						<filter>
 							<artifact>com.octopod:octolib</artifact>
 							<includes>
-								<include>com/octopod/utils/bukkit/Chat**.class</include>
+								<include>com/octopod/utils/minecraft/Chat**.class</include>
+                                <include>com/octopod/utils/abstraction/MCPlayer.class</include>
+                                <include>com/octopod/utils/bukkit/BukkitMCPlayer.class</include>
 							</includes>
 						</filter>
 					</filters>
