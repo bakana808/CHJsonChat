@@ -57,9 +57,10 @@ public class Functions extends CHJsonChat{
 		}
 
 		public String docs() {
-			return "void {json, [player]} Attempts to send a raw JSON to a player." +
-					"Minecraft will not attempt to check if the JSON is valid before sending it, " +
-					"and will simply kick the player out of the server if it isn't.";
+			return "void {json, [player]} " +
+				"Attempts to send a raw JSON to a player." +
+				"Minecraft will not attempt to check if the JSON is valid before sending it, " +
+				"and will simply kick the player out of the server if it isn't.";
 		}
 		
 	}
@@ -85,13 +86,8 @@ public class Functions extends CHJsonChat{
 				ChatBuilder cb = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
 				return toArray(cb, t);
 			}
-			
-			if(args[0] instanceof CArray) {
-				ChatBuilder cb = fromArray((CArray)args[0], t);
-				return new CString(ChatUtils.toLegacy(cb, colorSymbol), t);
-			}
 
-			throw new ConfigRuntimeException("Only strings and formatArrays are allowed.", ExceptionType.CastException, t);
+			throw new ConfigRuntimeException("Expected a string for the first argument.", ExceptionType.CastException, t);
 
 		}
 
@@ -104,7 +100,50 @@ public class Functions extends CHJsonChat{
 		}
 
 		public String docs() {
-			return "mixed {formatArray/message}";
+			return "array {message}" +
+					"Converts a legacy chat message into a formatArray.";
+		}
+
+	}		
+	
+	@api
+	public static class chjc_legacy extends Function {
+
+		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
+			
+			char colorSymbol = '&';
+			
+			if(args.length == 2) {
+				if(!(args[1] instanceof CString))
+					throw new ConfigRuntimeException("If color symbol is provided, must be a character.", ExceptionType.CastException, t);
+				try{
+					colorSymbol = args[1].val().charAt(0);
+				} catch (Exception e) {
+					throw new ConfigRuntimeException("If color symbol is provided, cannot be empty.", ExceptionType.CastException, t);
+				}
+			}
+			
+			if(args[0] instanceof CArray) {
+				ChatBuilder cb = fromArray((CArray)args[0], t);
+				return new CString(ChatUtils.toLegacy(cb, colorSymbol), t);
+			}
+
+			throw new ConfigRuntimeException("Expected an array for the first argument.", ExceptionType.CastException, t);
+
+		}
+
+		public String getName() {
+			return "chjc_convert";
+		}
+
+		public Integer[] numArgs() {
+			return new Integer[]{1, 2};
+		}
+
+		public String docs() {
+			return "string {formatArray}" +
+					"Converts a formatArray into a legacy chat message. " +
+					"Obviously, hover and click events won't carry over.";
 		}
 
 	}	
