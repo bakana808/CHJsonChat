@@ -8,7 +8,6 @@ import com.laytonsmith.core.extensions.MSExtension;
 @MSExtension("CHJsonChat")
 public class CHJsonChat extends AbstractExtension{
 
-	@Override
 	public Version getVersion() {
 		return new SimpleVersion(0, 0, 1);
 	}
