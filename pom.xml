@@ -45,6 +45,7 @@
 				<configuration>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <minimizeJar>false</minimizeJar>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
 					<artifactSet>
 						<includes>
 							<include>com.octopod:octolib</include>
