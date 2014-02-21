@@ -43,6 +43,8 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
+                    <shadedArtifactAttached>false</shadedArtifactAttached>
+                    <minimizeJar>false</minimizeJar>
 					<artifactSet>
 						<includes>
 							<include>com.octopod:octolib</include>
@@ -52,12 +54,18 @@
 						<filter>
 							<artifact>com.octopod:octolib</artifact>
 							<includes>
-								<include>com/octopod/utils/minecraft/Chat**.class</include>
-                                <include>com/octopod/utils/abstraction/MCPlayer.class</include>
-                                <include>com/octopod/utils/bukkit/BukkitMCPlayer.class</include>
+								<include>com/octopod/octolib/minecraft/Chat**.class</include>
+                                <include>com/octopod/octolib/abstraction/MCPlayer.class</include>
+                                <include>com/octopod/octolib/bukkit/BukkitMCPlayer.class</include>
 							</includes>
 						</filter>
 					</filters>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.octopod.octolib</pattern>
+                            <shadedPattern>com.octopod.chjsonchat.octolib</shadedPattern>
+                        </relocation>
+                    </relocations>
 				</configuration>
 				<executions>
 					<execution>
@@ -233,13 +241,11 @@
 			<groupId>com.octopod</groupId>
 			<artifactId>octolib</artifactId>
 			<version>0.1</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>LATEST</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>

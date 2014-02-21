@@ -16,13 +16,14 @@ import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
-import com.octopod.utils.minecraft.ChatBuilder;
-import com.octopod.utils.minecraft.ChatElement;
-import com.octopod.utils.minecraft.ChatUtils;
-import com.octopod.utils.minecraft.ChatUtils.ClickEvent;
-import com.octopod.utils.minecraft.ChatUtils.Color;
-import com.octopod.utils.minecraft.ChatUtils.Format;
-import com.octopod.utils.minecraft.ChatUtils.HoverEvent;
+import com.octopod.octolib.bukkit.BukkitMCPlayer;
+import com.octopod.octolib.minecraft.ChatBuilder;
+import com.octopod.octolib.minecraft.ChatElement;
+import com.octopod.octolib.minecraft.ChatUtils;
+import com.octopod.octolib.minecraft.ChatUtils.ClickEvent;
+import com.octopod.octolib.minecraft.ChatUtils.Color;
+import com.octopod.octolib.minecraft.ChatUtils.Format;
+import com.octopod.octolib.minecraft.ChatUtils.HoverEvent;
 
 public class Functions extends CHJsonChat{
 	
@@ -42,7 +43,7 @@ public class Functions extends CHJsonChat{
 				target = (MCPlayer)sender;
 			}
 			
-			ChatUtils.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target), args[0].val());
+			ChatUtils.send(new BukkitMCPlayer((Player)target.getHandle()), args[0].val());
 			
 			return new CVoid(t);
 
@@ -83,8 +84,8 @@ public class Functions extends CHJsonChat{
 			}
 			
 			if(args[0] instanceof CString) {
-				ChatBuilder cb = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
-				return toArray(cb, t);
+				ChatElement element = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
+				return toArray(new ChatBuilder().append(element), t);
 			}
 
 			throw new ConfigRuntimeException("Expected a string for the first argument.", ExceptionType.CastException, t);
@@ -110,22 +111,10 @@ public class Functions extends CHJsonChat{
 	public static class chjc_legacy extends Function {
 
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
-			
-			char colorSymbol = '&';
-			
-			if(args.length == 2) {
-				if(!(args[1] instanceof CString))
-					throw new ConfigRuntimeException("If color symbol is provided, must be a character.", ExceptionType.CastException, t);
-				try{
-					colorSymbol = args[1].val().charAt(0);
-				} catch (Exception e) {
-					throw new ConfigRuntimeException("If color symbol is provided, cannot be empty.", ExceptionType.CastException, t);
-				}
-			}
-			
+
 			if(args[0] instanceof CArray) {
 				ChatBuilder cb = fromArray((CArray)args[0], t);
-				return new CString(ChatUtils.toLegacy(cb, colorSymbol), t);
+				return new CString(ChatUtils.toLegacy(cb), t);
 			}
 
 			throw new ConfigRuntimeException("Expected an array for the first argument.", ExceptionType.CastException, t);
@@ -137,7 +126,7 @@ public class Functions extends CHJsonChat{
 		}
 
 		public Integer[] numArgs() {
-			return new Integer[]{1, 2};
+			return new Integer[]{1};
 		}
 
 		public String docs() {
@@ -169,7 +158,7 @@ public class Functions extends CHJsonChat{
 
 			ChatBuilder cb = fromArray(format, t);
 			Static.getServer().getConsole().sendMessage(cb.toLegacy());
-			cb.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target));
+			cb.send(new BukkitMCPlayer((Player)target.getHandle()));
 
 			return new CVoid(t);
 
@@ -206,7 +195,7 @@ public class Functions extends CHJsonChat{
 			
 			for(MCPlayer target: Static.getServer().getOnlinePlayers())
 				if(permission == null || ((Player)target.getHandle()).hasPermission(permission))
-					cb.send(new com.octopod.utils.bukkit.BukkitMCPlayer(target));
+					cb.send(new BukkitMCPlayer((Player)target.getHandle()));
 			
 			return new CVoid(t);
 
