@@ -1,5 +1,13 @@
 package com.octopod.chjsonchat;
 
+import com.octopod.octal.minecraft.ChatBuilder;
+import com.octopod.octal.minecraft.ChatElement;
+import com.octopod.octal.minecraft.ChatUtils;
+import com.octopod.octal.minecraft.ChatUtils.ChatColor;
+import com.octopod.octal.minecraft.ChatUtils.ChatFormat;
+import com.octopod.octal.minecraft.ChatUtils.ClickEvent;
+import com.octopod.octal.minecraft.ChatUtils.HoverEvent;
+import com.octopod.octal.minecraft.bukkit.BukkitPlayer;
 import org.bukkit.entity.Player;
 
 import com.laytonsmith.abstraction.MCCommandSender;
@@ -16,14 +24,7 @@ import com.laytonsmith.core.environments.CommandHelperEnvironment;
 import com.laytonsmith.core.environments.Environment;
 import com.laytonsmith.core.exceptions.ConfigRuntimeException;
 import com.laytonsmith.core.functions.Exceptions.ExceptionType;
-import com.octopod.octolib.minecraft.ChatBuilder;
-import com.octopod.octolib.minecraft.ChatElement;
-import com.octopod.octolib.minecraft.ChatUtils;
-import com.octopod.octolib.minecraft.ChatUtils.ClickEvent;
-import com.octopod.octolib.minecraft.ChatUtils.Color;
-import com.octopod.octolib.minecraft.ChatUtils.Format;
-import com.octopod.octolib.minecraft.ChatUtils.HoverEvent;
-import com.octopod.octolib.minecraft.bukkit.BukkitPlayer;
+
 
 public class Functions extends CHJsonChat{
 	
@@ -43,9 +44,9 @@ public class Functions extends CHJsonChat{
 				target = (MCPlayer)sender;
 			}
 			
-			ChatUtils.send(new BukkitPlayer((Player)target.getHandle()), args[0].val());
+			ChatUtils.send(new BukkitPlayer(target.getHandle()), args[0].val());
 			
-			return new CVoid(t);
+			return CVoid.VOID;
 
 		}
 
@@ -84,7 +85,7 @@ public class Functions extends CHJsonChat{
 			}
 			
 			if(args[0] instanceof CString) {
-				ChatElement element = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
+				ChatBuilder element = ChatUtils.fromLegacy(args[0].val(), colorSymbol);
 				return toArray(new ChatBuilder().append(element), t);
 			}
 
@@ -143,7 +144,7 @@ public class Functions extends CHJsonChat{
 		public Construct exec(Target t, Environment environment, Construct... args) throws ConfigRuntimeException {
 			
 			MCCommandSender sender = environment.getEnv(CommandHelperEnvironment.class).GetCommandSender();
-			MCPlayer target = null;
+			MCPlayer target;
 			CArray format;
 			
 			if(args.length == 1) {
@@ -160,7 +161,7 @@ public class Functions extends CHJsonChat{
 			Static.getServer().getConsole().sendMessage(cb.toLegacy());
 			cb.send(new BukkitPlayer(target.getHandle()));
 
-			return new CVoid(t);
+			return CVoid.VOID;
 
 		}
 
@@ -197,7 +198,7 @@ public class Functions extends CHJsonChat{
 				if(permission == null || ((Player)target.getHandle()).hasPermission(permission))
 					cb.send(new BukkitPlayer(target.getHandle()));
 			
-			return new CVoid(t);
+			return CVoid.VOID;
 
 		}
 
@@ -219,12 +220,12 @@ public class Functions extends CHJsonChat{
 		
 		CArray array = new CArray(t);
 		
-		for(ChatElement e: builder.getChatElements()) {
+		for(ChatElement e: builder.toElementList()) {
 			CArray formatArray = new CArray(t);
 			formatArray.set("text", e.getText());
 			formatArray.set("color", e.getColor().name().toLowerCase());
-			for(Format format: e.getFormats())
-				formatArray.set(format.name().toLowerCase(), new CBoolean(true, t), t);
+			for(ChatFormat format: e.getFormats())
+				formatArray.set(format.name().toLowerCase(), CBoolean.TRUE, t);
 			if(e.getClick() != null) {
 				CArray clickEvent = new CArray(t);
 				clickEvent.set("event", e.getClick().name().toLowerCase());
@@ -251,16 +252,16 @@ public class Functions extends CHJsonChat{
 		for(Construct c: format.asList()) {
 			
 			if(c instanceof CString) {
-				builder.append(((CString)c).val());
+				builder.append(c.val());
 				continue;
 			} 
 			
 			if(c instanceof CArray) {
 				
 				CArray element = (CArray)c;
-				Color color = Color.WHITE;
-				ClickEvent click = null;
-				HoverEvent hover = null;
+				ChatColor color = ChatColor.WHITE;
+				ClickEvent click;
+				HoverEvent hover;
 				String text = element.get("text", t).getValue();
 				
 				builder.append(text);
@@ -268,9 +269,9 @@ public class Functions extends CHJsonChat{
 				//Color Checks		
 				
 				try{
-					color = Color.valueOf(element.get("color").val().toUpperCase());
+					color = ChatColor.valueOf(element.get("color", t).val().toUpperCase());
 				} catch (IllegalArgumentException e) {
-					throw new ConfigRuntimeException("\"" + element.get("color") + "\" is not a valid color", ExceptionType.FormatException, t);
+					throw new ConfigRuntimeException("\"" + element.get("color", t) + "\" is not a valid color", ExceptionType.FormatException, t);
 				} catch (ConfigRuntimeException e) {}
 				
 				builder.color(color);
@@ -295,7 +296,7 @@ public class Functions extends CHJsonChat{
 				//Click Event Checks
 				
 				if(element.containsKey("onClick")) {
-					CArray clickArray = Static.getArray(element.get("onClick"), t);
+					CArray clickArray = Static.getArray(element.get("onClick", t), t);
 					try{
 						click = ClickEvent.valueOf(clickArray.get("event", t).val().toUpperCase());
 					} catch (IllegalArgumentException e) {
@@ -307,7 +308,7 @@ public class Functions extends CHJsonChat{
 				//Hover Event Checks
 				
 				if(element.containsKey("onHover")) {
-					CArray hoverArray = Static.getArray(element.get("onHover"), t);
+					CArray hoverArray = Static.getArray(element.get("onHover", t), t);
 					try{
 						hover = HoverEvent.valueOf(hoverArray.get("event", t).val().toUpperCase());
 					} catch (IllegalArgumentException e) {
