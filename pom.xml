@@ -26,45 +26,28 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<minimizeJar>true</minimizeJar>
-				  <!-- put your configurations here -->
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
-                    <minimizeJar>false</minimizeJar>
+                    <minimizeJar>true</minimizeJar>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
 					<artifactSet>
 						<includes>
-							<include>com.octopod:octolib</include>
+							<include>com.octopod:octal</include>
 						</includes>
 					</artifactSet>
 					<filters>
 						<filter>
-							<artifact>com.octopod:octolib</artifact>
+							<artifact>com.octopod:octal</artifact>
 							<includes>
-								<include>com/octopod/octolib/minecraft/Chat**.class</include>
-                                <include>com/octopod/octolib/abstraction/MCPlayer.class</include>
-                                <include>com/octopod/octolib/bukkit/BukkitMCPlayer.class</include>
+								<include>com/octopod/octal/minecraft/Chat**.class</include>
+                                <include>com/octopod/octal/minecraft/AbstractPlayer.class</include>
+                                <include>com/octopod/octal/minecraft/bukkit/BukkitPlayer.class</include>
 							</includes>
 						</filter>
 					</filters>
                     <relocations>
                         <relocation>
-                            <pattern>com.octopod.octolib</pattern>
-                            <shadedPattern>com.octopod.chjsonchat.octolib</shadedPattern>
+                            <pattern>com.octopod.octal</pattern>
+                            <shadedPattern>com.octopod.chjsonchat.octal</shadedPattern>
                         </relocation>
                     </relocations>
 				</configuration>
@@ -116,110 +99,7 @@
 				</dependencies>
 			</plugin>  
             -->
-            <!-- Leave this alone! Verifies some things so that your extension works. -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>2.2.4</version>
-        
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <phase>process-classes</phase>
-                        
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                    </execution>
-                </executions>
-        
-                <configuration>
-                    <outputDirectory>src/main/generated</outputDirectory>
-          
-                    <processors>
-                        <processor>com.laytonsmith.core.extensions.ExtensionAnnotationProcessor</processor>
-                    </processors>
-                </configuration>
-            </plugin>
-            
-            <!-- Leave this alone! Speeds up extension loading. -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-        
-                <executions>
-                    <execution>
-                        <id>cache-annotations</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-        
-                <configuration>
-                    <mainClass>com.laytonsmith.PureUtilities.ClassLoading.Annotations.CacheAnnotations</mainClass>
-          
-                    <arguments>
-                        <argument>${basedir}/target/classes</argument>
-                        <argument>${basedir}/target/classes</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
         </plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.bsc.maven</groupId>
-										<artifactId>
-											maven-processor-plugin
-										</artifactId>
-										<versionRange>
-											[2.2.4,)
-										</versionRange>
-										<goals>
-											<goal>process</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											exec-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.2.1,)
-										</versionRange>
-										<goals>
-											<goal>java</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 	
 	<repositories>
@@ -240,24 +120,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.octopod</groupId>
-			<artifactId>octolib</artifactId>
-			<version>0.1</version>
+			<artifactId>octal</artifactId>
+			<version>0.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>LATEST</version>
 		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>LATEST</version>
-		</dependency>
-		<dependency>                    
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>LATEST</version>
-		</dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.7.5-R0.1-SNAPSHOT</version>
+        </dependency>
 	    <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>commandhelper</artifactId>
